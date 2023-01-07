@@ -97,11 +97,13 @@ struct xpart {
  */
 struct part {
 
-  /*! Particle unique ID. */
-  long long id;
+  union {
 
-  /*! Pointer to corresponding gravity part. */
-  struct gpart* gpart;
+    /*! Particle unique ID. */
+    long long id;
+  };
+
+  struct gpart *gpart;
 
   /*! Particle position. */
   double x[3];
@@ -118,85 +120,16 @@ struct part {
   /*! Particle smoothing length. */
   float h;
 
-  /*! Particle internal energy. */
-  float u;
-
-  /*! Time derivative of the internal energy. */
-  float u_dt;
+  float wcount;
 
   /*! Particle density. */
   float rho;
 
-  /* Store density/force specific stuff. */
-  union {
+  /*! Particle density time derivative */
+  float rho_dt;
 
-    /**
-     * @brief Structure for the variables only used in the density loop over
-     * neighbours.
-     *
-     * Quantities in this sub-structure should only be accessed in the density
-     * loop over neighbours and the ghost task.
-     */
-    struct {
-
-      /*! Neighbour number count. */
-      float wcount;
-
-      /*! Derivative of the neighbour number with respect to h. */
-      float wcount_dh;
-
-      /*! Derivative of density with respect to h */
-      float rho_dh;
-
-      /*! Velocity divergence */
-      float div_v;
-
-      /*! Velocity curl */
-      float rot_v[3];
-
-    } density;
-
-    /**
-     * @brief Structure for the variables only used in the force loop over
-     * neighbours.
-     *
-     * Quantities in this sub-structure should only be accessed in the force
-     * loop over neighbours and the ghost, drift and kick tasks.
-     */
-    struct {
-
-      /*! "Grad h" term */
-      float f;
-
-      /*! Particle pressure. */
-      float pressure;
-
-      /*! Particle soundspeed. */
-      float soundspeed;
-
-      /*! Particle signal velocity */
-      float v_sig;
-
-      /*! Time derivative of smoothing length  */
-      float h_dt;
-
-      /*! Balsara switch */
-      float balsara;
-
-    } force;
-  };
-
-  /*! Additional data used by the MHD scheme */
-  struct mhd_part_data mhd_data;
-
-  /*! Chemistry information */
-  struct chemistry_part_data chemistry_data;
-
-  /*! Cooling information */
-  struct cooling_part_data cooling_data;
-
-  /*! Additional data used by the feedback */
-  struct feedback_part_data feedback_data;
+  /*! Signal velocity */
+  float v_sig;
 
   /*! Black holes information (e.g. swallowing ID) */
   struct black_holes_part_data black_holes_data;

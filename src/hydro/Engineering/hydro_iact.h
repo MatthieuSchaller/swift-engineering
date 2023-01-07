@@ -54,69 +54,23 @@ __attribute__((always_inline)) INLINE static void runner_iact_density(
     struct part *restrict pi, struct part *restrict pj, const float a,
     const float H) {
 
-  float wi, wj, wi_dx, wj_dx;
+  float wi, wj;
 
-#ifdef SWIFT_DEBUG_CHECKS
-  if (pi->time_bin >= time_bin_inhibited)
-    error("Inhibited pi in interaction function!");
-  if (pj->time_bin >= time_bin_inhibited)
-    error("Inhibited pj in interaction function!");
-#endif
-
-  /* Get r and 1/r. */
+  /* Get r. */
   const float r = sqrtf(r2);
-  const float r_inv = r ? 1.0f / r : 0.0f;
-
-  /* Get the masses. */
-  const float mi = pi->mass;
-  const float mj = pj->mass;
 
   /* Compute density of pi. */
   const float hi_inv = 1.f / hi;
   const float ui = r * hi_inv;
-  kernel_deval(ui, &wi, &wi_dx);
-
-  pi->rho += mj * wi;
-  pi->density.rho_dh -= mj * (hydro_dimension * wi + ui * wi_dx);
-  pi->density.wcount += wi;
-  pi->density.wcount_dh -= (hydro_dimension * wi + ui * wi_dx);
+  kernel_eval(ui, &wi);
 
   /* Compute density of pj. */
   const float hj_inv = 1.f / hj;
   const float uj = r * hj_inv;
-  kernel_deval(uj, &wj, &wj_dx);
+  kernel_eval(uj, &wj);
 
-  pj->rho += mi * wj;
-  pj->density.rho_dh -= mi * (hydro_dimension * wj + uj * wj_dx);
-  pj->density.wcount += wj;
-  pj->density.wcount_dh -= (hydro_dimension * wj + uj * wj_dx);
-
-  /* Compute dv dot r */
-  float dv[3], curlvr[3];
-
-  const float faci = mj * wi_dx * r_inv;
-  const float facj = mi * wj_dx * r_inv;
-
-  dv[0] = pi->v[0] - pj->v[0];
-  dv[1] = pi->v[1] - pj->v[1];
-  dv[2] = pi->v[2] - pj->v[2];
-  const float dvdr = dv[0] * dx[0] + dv[1] * dx[1] + dv[2] * dx[2];
-
-  pi->density.div_v -= faci * dvdr;
-  pj->density.div_v -= facj * dvdr;
-
-  /* Compute dv cross r */
-  curlvr[0] = dv[1] * dx[2] - dv[2] * dx[1];
-  curlvr[1] = dv[2] * dx[0] - dv[0] * dx[2];
-  curlvr[2] = dv[0] * dx[1] - dv[1] * dx[0];
-
-  pi->density.rot_v[0] += faci * curlvr[0];
-  pi->density.rot_v[1] += faci * curlvr[1];
-  pi->density.rot_v[2] += faci * curlvr[2];
-
-  pj->density.rot_v[0] += facj * curlvr[0];
-  pj->density.rot_v[1] += facj * curlvr[1];
-  pj->density.rot_v[2] += facj * curlvr[2];
+  pi->wcount += wi;
+  pj->wcount += wj;
 }
 
 /**
@@ -136,51 +90,17 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_density(
     struct part *restrict pi, const struct part *restrict pj, const float a,
     const float H) {
 
-  float wi, wi_dx;
+  float wi;
 
-#ifdef SWIFT_DEBUG_CHECKS
-  if (pi->time_bin >= time_bin_inhibited)
-    error("Inhibited pi in interaction function!");
-  if (pj->time_bin >= time_bin_inhibited)
-    error("Inhibited pj in interaction function!");
-#endif
-
-  /* Get the masses. */
-  const float mj = pj->mass;
-
-  /* Get r and 1/r. */
+  /* Get r. */
   const float r = sqrtf(r2);
-  const float r_inv = r ? 1.0f / r : 0.0f;
 
-  const float h_inv = 1.f / hi;
-  const float ui = r * h_inv;
-  kernel_deval(ui, &wi, &wi_dx);
+  /* Compute density of pi. */
+  const float hi_inv = 1.f / hi;
+  const float ui = r * hi_inv;
+  kernel_eval(ui, &wi);
 
-  pi->rho += mj * wi;
-  pi->density.rho_dh -= mj * (hydro_dimension * wi + ui * wi_dx);
-  pi->density.wcount += wi;
-  pi->density.wcount_dh -= (hydro_dimension * wi + ui * wi_dx);
-
-  /* Compute dv dot r */
-  float dv[3], curlvr[3];
-
-  const float faci = mj * wi_dx * r_inv;
-
-  dv[0] = pi->v[0] - pj->v[0];
-  dv[1] = pi->v[1] - pj->v[1];
-  dv[2] = pi->v[2] - pj->v[2];
-  const float dvdr = dv[0] * dx[0] + dv[1] * dx[1] + dv[2] * dx[2];
-
-  pi->density.div_v -= faci * dvdr;
-
-  /* Compute dv cross r */
-  curlvr[0] = dv[1] * dx[2] - dv[2] * dx[1];
-  curlvr[1] = dv[2] * dx[0] - dv[0] * dx[2];
-  curlvr[2] = dv[0] * dx[1] - dv[1] * dx[0];
-
-  pi->density.rot_v[0] += faci * curlvr[0];
-  pi->density.rot_v[1] += faci * curlvr[1];
-  pi->density.rot_v[2] += faci * curlvr[2];
+  pi->wcount += wi;
 }
 
 /**
@@ -240,6 +160,8 @@ __attribute__((always_inline)) INLINE static void runner_iact_force(
     const float r2, const float dx[3], const float hi, const float hj,
     struct part *restrict pi, struct part *restrict pj, const float a,
     const float H) {
+
+#if 0
 
 #ifdef SWIFT_DEBUG_CHECKS
   if (pi->time_bin >= time_bin_inhibited)
@@ -353,6 +275,8 @@ __attribute__((always_inline)) INLINE static void runner_iact_force(
   /* Update the signal velocity. */
   pi->force.v_sig = max(pi->force.v_sig, v_sig);
   pj->force.v_sig = max(pj->force.v_sig, v_sig);
+
+#endif
 }
 
 /**
@@ -371,6 +295,8 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_force(
     const float r2, const float dx[3], const float hi, const float hj,
     struct part *restrict pi, const struct part *restrict pj, const float a,
     const float H) {
+
+#if 0
 
 #ifdef SWIFT_DEBUG_CHECKS
   if (pi->time_bin >= time_bin_inhibited)
@@ -475,6 +401,8 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_force(
 
   /* Update the signal velocity. */
   pi->force.v_sig = max(pi->force.v_sig, v_sig);
+
+#endif
 }
 
 #endif /* SWIFT_ENGINEERING_HYDRO_IACT_H */

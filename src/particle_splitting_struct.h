@@ -27,14 +27,18 @@
  *         to track the split history of each particle.
  */
 struct particle_splitting_data {
-  /*! Particle ID of the progenitor */
-  long long progenitor_id;
 
-  /*! Binary tree used to show the outcome of splitting events */
-  long long split_tree;
+  union {
 
-  /*! Number of times this particle has been split. */
-  uint8_t split_count;
+    /*! Particle ID of the progenitor */
+    long long progenitor_id;
+
+    /*! Binary tree used to show the outcome of splitting events */
+    long long split_tree;
+
+    /*! Number of times this particle has been split. */
+    uint8_t split_count;
+  };
 };
 
 #endif /* SWIFT_PARTICLE_SPLITTING_STRUCT_H */

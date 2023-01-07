@@ -164,8 +164,7 @@ gas_internal_energy_from_pressure(float density, float pressure) {
 __attribute__((always_inline, const)) INLINE static float
 gas_soundspeed_from_internal_energy(float density, float u) {
 
-  error("To be implemented");
-  return -1;
+  return eos.tait_c0;
 }
 
 /**

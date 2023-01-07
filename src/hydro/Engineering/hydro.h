@@ -45,6 +45,9 @@
 #include "kernel_hydro.h"
 #include "minmax.h"
 
+/* Standard include */
+#include <float.h>
+
 /**
  * @brief Returns the comoving internal energy of a particle at the last
  * time the particle was kicked.
@@ -427,7 +430,15 @@ __attribute__((always_inline)) INLINE static float hydro_compute_timestep(
   const float dt_cfl = 2.f * kernel_gamma * CFL_condition * cosmo->a * p->h /
                        (cosmo->a_factor_sound_speed * p->v_sig);
 
-  return dt_cfl;
+  const float ac2 = p->a_hydro[0] * p->a_hydro[0] +
+                    p->a_hydro[1] * p->a_hydro[1] +
+                    p->a_hydro[2] * p->a_hydro[2];
+
+  const float ac_inv = (ac2 > 0.f) ? 1.f / (p->mass * sqrtf(ac2)) : FLT_MAX;
+
+  const float dt_accel = sqrt(kernel_gamma * p->h * ac_inv);
+
+  return min(dt_cfl, dt_accel);
 }
 
 /**
@@ -446,12 +457,10 @@ __attribute__((always_inline)) INLINE static float hydro_signal_velocity(
     const float dx[3], const struct part *restrict pi,
     const struct part *restrict pj, const float mu_ij, const float beta) {
 
-  //  const float ci = pi->force.soundspeed;
-  // const float cj = pj->force.soundspeed;
+  const float ci = gas_soundspeed_from_internal_energy(pi->rho, 0.f);
+  const float cj = gas_soundspeed_from_internal_energy(pj->rho, 0.f);
 
-  error("To implement!");
-
-  return -1.f;  // ci + cj - beta * mu_ij;
+  return ci + cj - beta * mu_ij;
 }
 
 /**

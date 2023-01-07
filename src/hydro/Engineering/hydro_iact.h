@@ -296,8 +296,6 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_force(
     struct part *restrict pi, const struct part *restrict pj, const float a,
     const float H) {
 
-#if 0
-
 #ifdef SWIFT_DEBUG_CHECKS
   if (pi->time_bin >= time_bin_inhibited)
     error("Inhibited pi in interaction function!");
@@ -305,21 +303,17 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_force(
     error("Inhibited pj in interaction function!");
 #endif
 
-  /* Cosmological factors entering the EoMs */
-  const float fac_mu = pow_three_gamma_minus_five_over_two(a);
-  const float a2_Hubble = a * a * H;
-
   /* Get r and 1/r. */
   const float r = sqrtf(r2);
   const float r_inv = r ? 1.0f / r : 0.0f;
 
   /* Recover some data */
-  const float mi = pi->mass;
+  // const float mi = pi->mass;
   const float mj = pj->mass;
   const float rhoi = pi->rho;
   const float rhoj = pj->rho;
-  const float pressurei = pi->force.pressure;
-  const float pressurej = pj->force.pressure;
+  const float pressurei = gas_pressure_from_internal_energy(rhoi, 0.f);
+  const float pressurej = gas_pressure_from_internal_energy(rhoj, 0.f);
 
   /* Get the kernel for hi. */
   const float hi_inv = 1.0f / hi;
@@ -337,40 +331,28 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_force(
   kernel_deval(xj, &wj, &wj_dx);
   const float wj_dr = hjd_inv * wj_dx;
 
-  /* Variable smoothing length term */
-  const float f_ij = 1.f - pi->force.f / mj;
-  const float f_ji = 1.f - pj->force.f / mi;
-
   /* Compute gradient terms */
-  const float P_over_rho2_i = pressurei / (rhoi * rhoi) * f_ij;
-  const float P_over_rho2_j = pressurej / (rhoj * rhoj) * f_ji;
+  const float P_over_rho2_i = pressurei / (rhoi * rhoi);
+  const float P_over_rho2_j = pressurej / (rhoj * rhoj);
 
   /* Compute dv dot r. */
   const float dvdr = (pi->v[0] - pj->v[0]) * dx[0] +
                      (pi->v[1] - pj->v[1]) * dx[1] +
                      (pi->v[2] - pj->v[2]) * dx[2];
 
-  /* Add Hubble flow */
-  const float dvdr_Hubble = dvdr + a2_Hubble * r2;
-
   /* Are the particles moving towards each others ? */
-  const float omega_ij = min(dvdr_Hubble, 0.f);
-  const float mu_ij = fac_mu * r_inv * omega_ij; /* This is 0 or negative */
+  const float omega_ij = min(dvdr, 0.f);
+  const float mu_ij = r_inv * omega_ij; /* This is 0 or negative */
 
   /* Compute signal velocity */
   const float v_sig = signal_velocity(dx, pi, pj, mu_ij, const_viscosity_beta);
 
-  /* Grab balsara switches */
-  const float balsara_i = pi->force.balsara;
-  const float balsara_j = pj->force.balsara;
-
   /* Construct the full viscosity term */
   const float rho_ij = 0.5f * (rhoi + rhoj);
-  const float visc = -0.25f * v_sig * (balsara_i + balsara_j) * mu_ij / rho_ij;
+  const float visc = -0.25f * v_sig * mu_ij / rho_ij;
 
   /* Convolve with the kernel */
-  const float visc_acc_term =
-      0.5f * visc * (wi_dr * f_ij + wj_dr * f_ji) * r_inv;
+  const float visc_acc_term = 0.5f * visc * (wi_dr + wj_dr) * r_inv;
 
   /* SPH acceleration term */
   const float sph_acc_term =
@@ -384,25 +366,8 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_force(
   pi->a_hydro[1] -= mj * acc * dx[1];
   pi->a_hydro[2] -= mj * acc * dx[2];
 
-  /* Get the time derivative for u. */
-  const float sph_du_term_i = P_over_rho2_i * dvdr * r_inv * wi_dr;
-
-  /* Viscosity term */
-  const float visc_du_term = 0.5f * visc_acc_term * dvdr_Hubble;
-
-  /* Assemble the energy equation term */
-  const float du_dt_i = sph_du_term_i + visc_du_term;
-
-  /* Internal energy time derivatibe */
-  pi->u_dt += du_dt_i * mj;
-
-  /* Get the time derivative for h. */
-  pi->force.h_dt -= mj * dvdr * r_inv / rhoj * wi_dr * f_ij;
-
   /* Update the signal velocity. */
-  pi->force.v_sig = max(pi->force.v_sig, v_sig);
-
-#endif
+  pi->v_sig = max(v_sig, v_sig);
 }
 
 #endif /* SWIFT_ENGINEERING_HYDRO_IACT_H */

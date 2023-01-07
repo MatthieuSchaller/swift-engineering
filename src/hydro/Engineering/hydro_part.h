@@ -94,8 +94,6 @@ struct part {
   /*! Particle unique ID. */
   long long id;
 
-  //  struct gpart *gpart;
-
   /*! Particle position. */
   double x[3];
 

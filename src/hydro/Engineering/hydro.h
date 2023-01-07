@@ -100,8 +100,7 @@ __attribute__((always_inline)) INLINE static float
 hydro_get_drifted_physical_internal_energy(const struct part *restrict p,
                                            const struct cosmology *cosmo) {
 
-  error("Not implemented");
-  return -1.f;
+  return 0.f;
 }
 
 /**
@@ -114,8 +113,7 @@ hydro_get_drifted_physical_internal_energy(const struct part *restrict p,
 __attribute__((always_inline)) INLINE static float hydro_get_comoving_pressure(
     const struct part *restrict p) {
 
-  error("Not implemented");
-  return -1.f;
+  return gas_pressure_from_internal_energy(p->rho, 0.f);
 }
 
 /**
@@ -187,8 +185,7 @@ __attribute__((always_inline)) INLINE static float
 hydro_get_drifted_physical_entropy(const struct part *restrict p,
                                    const struct cosmology *cosmo) {
 
-  error("Not implemented");
-  return -1.f;
+  return 0.f;
 }
 
 /**
@@ -250,8 +247,7 @@ __attribute__((always_inline)) INLINE static float hydro_get_physical_density(
 __attribute__((always_inline)) INLINE static float hydro_get_mass(
     const struct part *restrict p) {
 
-  error("Not implemented");
-  return -1.f;
+  return p->mass;
 }
 
 /**

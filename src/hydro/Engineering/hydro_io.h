@@ -50,7 +50,7 @@ INLINE static void hydro_read_particles(struct part* parts,
                                         struct io_props* list,
                                         int* num_fields) {
 
-  *num_fields = 8;
+  *num_fields = 6;
 
   /* List what we want to read */
   list[0] = io_make_input_field("Coordinates", DOUBLE, 3, COMPULSORY,
@@ -61,11 +61,9 @@ INLINE static void hydro_read_particles(struct part* parts,
                                 parts, mass);
   list[3] = io_make_input_field("SmoothingLength", FLOAT, 1, COMPULSORY,
                                 UNIT_CONV_LENGTH, parts, h);
-  list[5] = io_make_input_field("ParticleIDs", ULONGLONG, 1, COMPULSORY,
+  list[4] = io_make_input_field("ParticleIDs", ULONGLONG, 1, COMPULSORY,
                                 UNIT_CONV_NO_UNITS, parts, id);
-  list[6] = io_make_input_field("Accelerations", FLOAT, 3, OPTIONAL,
-                                UNIT_CONV_ACCELERATION, parts, a_hydro);
-  list[7] = io_make_input_field("Density", FLOAT, 1, OPTIONAL,
+  list[5] = io_make_input_field("Density", FLOAT, 1, OPTIONAL,
                                 UNIT_CONV_DENSITY, parts, rho);
 }
 

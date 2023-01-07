@@ -77,7 +77,7 @@ void space_first_init_parts_mapper(void *restrict map_data, int count,
             p[k].h);
 
     if (with_gravity) {
-      const struct gpart *gp = p[k].gpart;
+      const struct gpart *gp = NULL;  // p[k].gpart;
       const float softening = gravity_get_softening(gp, grav_props);
       p->h = max(p->h, softening * hydro_h_min_ratio);
     }
@@ -152,8 +152,8 @@ void space_first_init_parts_mapper(void *restrict map_data, int count,
 
 #ifdef SWIFT_DEBUG_CHECKS
     /* Check part->gpart->part linkeage. */
-    if (p[k].gpart && p[k].gpart->id_or_neg_offset != -(k + delta))
-      error("Invalid gpart -> part link");
+    /* if (p[k].gpart && p[k].gpart->id_or_neg_offset != -(k + delta)) */
+    /*   error("Invalid gpart -> part link"); */
 
     /* Initialise the time-integration check variables */
     p[k].ti_drift = 0;

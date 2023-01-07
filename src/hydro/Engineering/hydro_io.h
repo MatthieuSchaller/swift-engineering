@@ -61,8 +61,6 @@ INLINE static void hydro_read_particles(struct part* parts,
                                 parts, mass);
   list[3] = io_make_input_field("SmoothingLength", FLOAT, 1, COMPULSORY,
                                 UNIT_CONV_LENGTH, parts, h);
-  list[4] = io_make_input_field("InternalEnergy", FLOAT, 1, COMPULSORY,
-                                UNIT_CONV_ENERGY_PER_UNIT_MASS, parts, u);
   list[5] = io_make_input_field("ParticleIDs", ULONGLONG, 1, COMPULSORY,
                                 UNIT_CONV_NO_UNITS, parts, id);
   list[6] = io_make_input_field("Accelerations", FLOAT, 3, OPTIONAL,
@@ -112,22 +110,24 @@ INLINE static void convert_part_vel(const struct engine* e,
   const struct cosmology* cosmo = e->cosmology;
   const integertime_t ti_current = e->ti_current;
   const double time_base = e->time_base;
-  const float dt_kick_grav_mesh = e->dt_kick_grav_mesh_for_io;
+  /* const float dt_kick_grav_mesh = e->dt_kick_grav_mesh_for_io; */
 
   const integertime_t ti_beg = get_integer_time_begin(ti_current, p->time_bin);
   const integertime_t ti_end = get_integer_time_end(ti_current, p->time_bin);
 
   /* Get time-step since the last kick */
-  float dt_kick_grav, dt_kick_hydro;
+  float /*dt_kick_grav,*/ dt_kick_hydro;
   if (with_cosmology) {
-    dt_kick_grav = cosmology_get_grav_kick_factor(cosmo, ti_beg, ti_current);
-    dt_kick_grav -=
-        cosmology_get_grav_kick_factor(cosmo, ti_beg, (ti_beg + ti_end) / 2);
+    /* dt_kick_grav = cosmology_get_grav_kick_factor(cosmo, ti_beg, ti_current);
+     */
+    /* dt_kick_grav -= */
+    /*     cosmology_get_grav_kick_factor(cosmo, ti_beg, (ti_beg + ti_end) / 2);
+     */
     dt_kick_hydro = cosmology_get_hydro_kick_factor(cosmo, ti_beg, ti_current);
     dt_kick_hydro -=
         cosmology_get_hydro_kick_factor(cosmo, ti_beg, (ti_beg + ti_end) / 2);
   } else {
-    dt_kick_grav = (ti_current - ((ti_beg + ti_end) / 2)) * time_base;
+    // dt_kick_grav = (ti_current - ((ti_beg + ti_end) / 2)) * time_base;
     dt_kick_hydro = (ti_current - ((ti_beg + ti_end) / 2)) * time_base;
   }
 
@@ -136,34 +136,24 @@ INLINE static void convert_part_vel(const struct engine* e,
   ret[1] = xp->v_full[1] + p->a_hydro[1] * dt_kick_hydro;
   ret[2] = xp->v_full[2] + p->a_hydro[2] * dt_kick_hydro;
 
-  /* Add the gravity term */
-  if (p->gpart != NULL) {
-    ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
-    ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
-    ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
-  }
+  /* /\* Add the gravity term *\/ */
+  /* if (p->gpart != NULL) { */
+  /*   ret[0] += p->gpart->a_grav[0] * dt_kick_grav; */
+  /*   ret[1] += p->gpart->a_grav[1] * dt_kick_grav; */
+  /*   ret[2] += p->gpart->a_grav[2] * dt_kick_grav; */
+  /* } */
 
-  /* And the mesh gravity term */
-  if (p->gpart != NULL) {
-    ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
-    ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
-    ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
-  }
+  /* /\* And the mesh gravity term *\/ */
+  /* if (p->gpart != NULL) { */
+  /*   ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh; */
+  /*   ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh; */
+  /*   ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh; */
+  /* } */
 
   /* Conversion from internal units to peculiar velocities */
   ret[0] *= cosmo->a_inv;
   ret[1] *= cosmo->a_inv;
   ret[2] *= cosmo->a_inv;
-}
-
-INLINE static void convert_part_potential(const struct engine* e,
-                                          const struct part* p,
-                                          const struct xpart* xp, float* ret) {
-
-  if (p->gpart != NULL)
-    ret[0] = gravity_get_comoving_potential(p->gpart);
-  else
-    ret[0] = 0.f;
 }
 
 /**
@@ -179,7 +169,7 @@ INLINE static void hydro_write_particles(const struct part* parts,
                                          struct io_props* list,
                                          int* num_fields) {
 
-  *num_fields = 10;
+  *num_fields = 7;
 
   /* List what we want to write */
   list[0] = io_make_output_field_convert_part(
@@ -199,31 +189,17 @@ INLINE static void hydro_write_particles(const struct part* parts,
       "SmoothingLengths", FLOAT, 1, UNIT_CONV_LENGTH, 1.f, parts, h,
       "Co-moving smoothing lengths (FWHM of the kernel) of the particles");
 
-  list[4] = io_make_output_field(
-      "InternalEnergies", FLOAT, 1, UNIT_CONV_ENERGY_PER_UNIT_MASS,
-      -3.f * hydro_gamma_minus_one, parts, u,
-      "Co-moving thermal energies per unit mass of the particles");
-
-  list[5] =
+  list[4] =
       io_make_output_field("ParticleIDs", ULONGLONG, 1, UNIT_CONV_NO_UNITS, 0.f,
                            parts, id, "Unique IDs of the particles");
 
-  list[6] = io_make_output_field("Densities", FLOAT, 1, UNIT_CONV_DENSITY, -3.f,
+  list[5] = io_make_output_field("Densities", FLOAT, 1, UNIT_CONV_DENSITY, -3.f,
                                  parts, rho,
                                  "Co-moving mass densities of the particles");
 
-  list[7] = io_make_output_field_convert_part(
-      "Entropies", FLOAT, 1, UNIT_CONV_ENTROPY_PER_UNIT_MASS, 0.f, parts,
-      xparts, convert_S, "Co-moving entropies per unit mass of the particles");
-
-  list[8] = io_make_output_field_convert_part(
+  list[6] = io_make_output_field_convert_part(
       "Pressures", FLOAT, 1, UNIT_CONV_PRESSURE, -3.f * hydro_gamma, parts,
       xparts, convert_P, "Co-moving pressures of the particles");
-
-  list[9] = io_make_output_field_convert_part(
-      "Potentials", FLOAT, 1, UNIT_CONV_POTENTIAL, -1.f, parts, xparts,
-      convert_part_potential,
-      "Co-moving gravitational potential at position of the particles");
 }
 
 /**

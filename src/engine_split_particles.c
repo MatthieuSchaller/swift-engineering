@@ -162,7 +162,7 @@ void engine_split_gas_particle_split_mapper(void *restrict map_data, int count,
 
       /* Current other fields associated to this particle */
       struct xpart *xp = &xparts[i];
-      struct gpart *gp = p->gpart;
+      struct gpart *gp = NULL;  // p->gpart;
 
       /* Start by copying over the particles */
       memcpy(&global_parts[k_parts], p, sizeof(struct part));
@@ -187,7 +187,7 @@ void engine_split_gas_particle_split_mapper(void *restrict map_data, int count,
 
       /* Re-link everything */
       if (with_gravity) {
-        global_parts[k_parts].gpart = &global_gparts[k_gparts];
+        /* global_parts[k_parts].gpart = &global_gparts[k_gparts]; */
         global_gparts[k_gparts].id_or_neg_offset = -k_parts;
       }
 

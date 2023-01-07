@@ -245,26 +245,26 @@ __attribute__((always_inline)) INLINE static void kick_part(
   xp->v_full[1] += p->a_hydro[1] * dt_kick_hydro;
   xp->v_full[2] += p->a_hydro[2] * dt_kick_hydro;
 
-  /* Kick particles in momentum space (grav acc.) */
-  if (p->gpart != NULL) {
-    xp->v_full[0] += p->gpart->a_grav[0] * dt_kick_grav;
-    xp->v_full[1] += p->gpart->a_grav[1] * dt_kick_grav;
-    xp->v_full[2] += p->gpart->a_grav[2] * dt_kick_grav;
-  }
+  /* /\* Kick particles in momentum space (grav acc.) *\/ */
+  /* if (p->gpart != NULL) { */
+  /*   xp->v_full[0] += p->gpart->a_grav[0] * dt_kick_grav; */
+  /*   xp->v_full[1] += p->gpart->a_grav[1] * dt_kick_grav; */
+  /*   xp->v_full[2] += p->gpart->a_grav[2] * dt_kick_grav; */
+  /* } */
 
-  /* Kick particles in momentum space (mesh grav acc.) */
-  if (p->gpart != NULL) {
-    xp->v_full[0] += p->gpart->a_grav_mesh[0] * dt_kick_mesh_grav;
-    xp->v_full[1] += p->gpart->a_grav_mesh[1] * dt_kick_mesh_grav;
-    xp->v_full[2] += p->gpart->a_grav_mesh[2] * dt_kick_mesh_grav;
-  }
+  /* /\* Kick particles in momentum space (mesh grav acc.) *\/ */
+  /* if (p->gpart != NULL) { */
+  /*   xp->v_full[0] += p->gpart->a_grav_mesh[0] * dt_kick_mesh_grav; */
+  /*   xp->v_full[1] += p->gpart->a_grav_mesh[1] * dt_kick_mesh_grav; */
+  /*   xp->v_full[2] += p->gpart->a_grav_mesh[2] * dt_kick_mesh_grav; */
+  /* } */
 
-  /* Give the gpart friend the same velocity */
-  if (p->gpart != NULL) {
-    p->gpart->v_full[0] = xp->v_full[0];
-    p->gpart->v_full[1] = xp->v_full[1];
-    p->gpart->v_full[2] = xp->v_full[2];
-  }
+  /* /\* Give the gpart friend the same velocity *\/ */
+  /* if (p->gpart != NULL) { */
+  /*   p->gpart->v_full[0] = xp->v_full[0]; */
+  /*   p->gpart->v_full[1] = xp->v_full[1]; */
+  /*   p->gpart->v_full[2] = xp->v_full[2]; */
+  /* } */
 
   /* Extra kick work (thermal quantities etc.) */
   /* for the GEAR RT, we need to do this before we update
@@ -276,7 +276,7 @@ __attribute__((always_inline)) INLINE static void kick_part(
                    floor_props);
   mhd_kick_extra(p, xp, dt_kick_therm, dt_kick_grav, dt_kick_hydro,
                  dt_kick_corr, cosmo, hydro_props, floor_props);
-  if (p->gpart != NULL) gravity_kick_extra(p->gpart, dt_kick_grav);
+  /* if (p->gpart != NULL) gravity_kick_extra(p->gpart, dt_kick_grav); */
 }
 
 /**

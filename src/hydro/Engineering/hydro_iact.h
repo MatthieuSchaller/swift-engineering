@@ -69,8 +69,8 @@ __attribute__((always_inline)) INLINE static void runner_iact_density(
   const float uj = r * hj_inv;
   kernel_eval(uj, &wj);
 
-  pi->wcount += wi;
-  pj->wcount += wj;
+  pi->density.wcount += wi;
+  pj->density.wcount += wj;
 }
 
 /**
@@ -100,7 +100,7 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_density(
   const float ui = r * hi_inv;
   kernel_eval(ui, &wi);
 
-  pi->wcount += wi;
+  pi->density.wcount += wi;
 }
 
 /**

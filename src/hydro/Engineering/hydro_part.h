@@ -62,12 +62,6 @@ struct xpart {
   /*! Velocity at the last full step. */
   float v_full[3];
 
-  /*! Gravitational acceleration at the end of the last step */
-  float a_grav[3];
-
-  /*! Internal energy at the last full step. */
-  float u_full;
-
   /*! Additional data used to record particle splits */
   struct particle_splitting_data split_data;
 
@@ -97,13 +91,10 @@ struct xpart {
  */
 struct part {
 
-  union {
+  /*! Particle unique ID. */
+  long long id;
 
-    /*! Particle unique ID. */
-    long long id;
-  };
-
-  struct gpart *gpart;
+  //  struct gpart *gpart;
 
   /*! Particle position. */
   double x[3];
@@ -120,7 +111,11 @@ struct part {
   /*! Particle smoothing length. */
   float h;
 
-  float wcount;
+  struct {
+
+    float wcount;
+
+  } density;
 
   /*! Particle density. */
   float rho;

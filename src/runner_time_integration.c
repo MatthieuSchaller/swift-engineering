@@ -181,13 +181,13 @@ void runner_do_kick1(struct runner *r, struct cell *c, const int timer) {
                   dt_kick_therm, dt_kick_corr, cosmo, hydro_props,
                   entropy_floor, ti_begin, ti_end, ti_begin_mesh, ti_end_mesh);
 
-        /* Update the accelerations to be used in the drift for hydro */
-        if (p->gpart != NULL) {
+        /* /\* Update the accelerations to be used in the drift for hydro *\/ */
+        /* if (p->gpart != NULL) { */
 
-          xp->a_grav[0] = p->gpart->a_grav[0] + p->gpart->a_grav_mesh[0];
-          xp->a_grav[1] = p->gpart->a_grav[1] + p->gpart->a_grav_mesh[1];
-          xp->a_grav[2] = p->gpart->a_grav[2] + p->gpart->a_grav_mesh[2];
-        }
+        /*   xp->a_grav[0] = p->gpart->a_grav[0] + p->gpart->a_grav_mesh[0]; */
+        /*   xp->a_grav[1] = p->gpart->a_grav[1] + p->gpart->a_grav_mesh[1]; */
+        /*   xp->a_grav[2] = p->gpart->a_grav[2] + p->gpart->a_grav_mesh[2]; */
+        /* } */
       }
     }
 
@@ -735,7 +735,7 @@ void runner_do_timestep(struct runner *r, struct cell *c, const int timer) {
 
         /* Update particle */
         p->time_bin = get_time_bin(ti_new_step);
-        if (p->gpart != NULL) p->gpart->time_bin = p->time_bin;
+        /* if (p->gpart != NULL) p->gpart->time_bin = p->time_bin; */
 
         /* Update the tracers properties */
         tracers_after_timestep_part(
@@ -745,7 +745,7 @@ void runner_do_timestep(struct runner *r, struct cell *c, const int timer) {
 
         /* Number of updated particles */
         updated++;
-        if (p->gpart != NULL) g_updated++;
+        /* if (p->gpart != NULL) g_updated++; */
 
         /* What is the next sync-point ? */
         ti_hydro_end_min = min(ti_current + ti_new_step, ti_hydro_end_min);
@@ -754,17 +754,17 @@ void runner_do_timestep(struct runner *r, struct cell *c, const int timer) {
         /* What is the next starting point for this cell ? */
         ti_hydro_beg_max = max(ti_current, ti_hydro_beg_max);
 
-        if (p->gpart != NULL) {
+        /* if (p->gpart != NULL) { */
 
-          /* What is the next sync-point ? */
-          ti_gravity_end_min =
-              min(ti_current + ti_new_step, ti_gravity_end_min);
-          ti_gravity_end_max =
-              max(ti_current + ti_new_step, ti_gravity_end_max);
+        /*   /\* What is the next sync-point ? *\/ */
+        /*   ti_gravity_end_min = */
+        /*       min(ti_current + ti_new_step, ti_gravity_end_min); */
+        /*   ti_gravity_end_max = */
+        /*       max(ti_current + ti_new_step, ti_gravity_end_max); */
 
-          /* What is the next starting point for this cell ? */
-          ti_gravity_beg_max = max(ti_current, ti_gravity_beg_max);
-        }
+        /*   /\* What is the next starting point for this cell ? *\/ */
+        /*   ti_gravity_beg_max = max(ti_current, ti_gravity_beg_max); */
+        /* } */
 
         /* Same for RT */
         if (with_rt) {
@@ -820,15 +820,15 @@ void runner_do_timestep(struct runner *r, struct cell *c, const int timer) {
              * is inactive, do an appropriate check at the end. */
           }
 
-          if (p->gpart != NULL) {
+          /* if (p->gpart != NULL) { */
 
-            /* What is the next sync-point ? */
-            ti_gravity_end_min = min(ti_end, ti_gravity_end_min);
-            ti_gravity_end_max = max(ti_end, ti_gravity_end_max);
+          /*   /\* What is the next sync-point ? *\/ */
+          /*   ti_gravity_end_min = min(ti_end, ti_gravity_end_min); */
+          /*   ti_gravity_end_max = max(ti_end, ti_gravity_end_max); */
 
-            /* What is the next starting point for this cell ? */
-            ti_gravity_beg_max = max(ti_beg, ti_gravity_beg_max);
-          }
+          /*   /\* What is the next starting point for this cell ? *\/ */
+          /*   ti_gravity_beg_max = max(ti_beg, ti_gravity_beg_max); */
+          /* } */
         }
       }
     }
@@ -1334,8 +1334,9 @@ void runner_do_limiter(struct runner *r, struct cell *c, int force,
 
   integertime_t ti_hydro_end_min = max_nr_timesteps, ti_hydro_end_max = 0,
                 ti_hydro_beg_max = 0;
-  integertime_t ti_gravity_end_min = max_nr_timesteps, ti_gravity_end_max = 0,
-                ti_gravity_beg_max = 0;
+  /* integertime_t ti_gravity_end_min = max_nr_timesteps, ti_gravity_end_max =
+   * 0, */
+  /*               ti_gravity_beg_max = 0; */
 
   /* Limit irrespective of cell flags? */
   force = (force || cell_get_flag(c, cell_flag_do_hydro_limiter));
@@ -1361,23 +1362,23 @@ void runner_do_limiter(struct runner *r, struct cell *c, int force,
         /* And aggregate */
         ti_hydro_end_min = min(cp->hydro.ti_end_min, ti_hydro_end_min);
         ti_hydro_beg_max = max(cp->hydro.ti_beg_max, ti_hydro_beg_max);
-        ti_gravity_end_min = min(cp->grav.ti_end_min, ti_gravity_end_min);
-        ti_gravity_beg_max = max(cp->grav.ti_beg_max, ti_gravity_beg_max);
+        /* ti_gravity_end_min = min(cp->grav.ti_end_min, ti_gravity_end_min); */
+        /* ti_gravity_beg_max = max(cp->grav.ti_beg_max, ti_gravity_beg_max); */
       }
     }
 
     /* Store the updated values */
     c->hydro.ti_end_min = min(c->hydro.ti_end_min, ti_hydro_end_min);
     c->hydro.ti_beg_max = max(c->hydro.ti_beg_max, ti_hydro_beg_max);
-    c->grav.ti_end_min = min(c->grav.ti_end_min, ti_gravity_end_min);
-    c->grav.ti_beg_max = max(c->grav.ti_beg_max, ti_gravity_beg_max);
+    /* c->grav.ti_end_min = min(c->grav.ti_end_min, ti_gravity_end_min); */
+    /* c->grav.ti_beg_max = max(c->grav.ti_beg_max, ti_gravity_beg_max); */
 
   } else if (!c->split && force) {
 
     ti_hydro_end_min = c->hydro.ti_end_min;
     ti_hydro_beg_max = c->hydro.ti_beg_max;
-    ti_gravity_end_min = c->grav.ti_end_min;
-    ti_gravity_beg_max = c->grav.ti_beg_max;
+    /* ti_gravity_end_min = c->grav.ti_end_min; */
+    /* ti_gravity_beg_max = c->grav.ti_beg_max; */
 
     /* Loop over the gas particles in this cell. */
     for (int k = 0; k < count; k++) {
@@ -1432,27 +1433,27 @@ void runner_do_limiter(struct runner *r, struct cell *c, int force,
         /* What is the next starting point for this cell ? */
         ti_hydro_beg_max = max(ti_beg_new, ti_hydro_beg_max);
 
-        /* Also limit the gpart counter-part */
-        if (p->gpart != NULL) {
+        /* /\* Also limit the gpart counter-part *\/ */
+        /* if (p->gpart != NULL) { */
 
-          /* Register the time-bin */
-          p->gpart->time_bin = p->time_bin;
+        /*   /\* Register the time-bin *\/ */
+        /*   p->gpart->time_bin = p->time_bin; */
 
-          /* What is the next sync-point ? */
-          ti_gravity_end_min = min(ti_end_new, ti_gravity_end_min);
-          ti_gravity_end_max = max(ti_end_new, ti_gravity_end_max);
+        /*   /\* What is the next sync-point ? *\/ */
+        /*   ti_gravity_end_min = min(ti_end_new, ti_gravity_end_min); */
+        /*   ti_gravity_end_max = max(ti_end_new, ti_gravity_end_max); */
 
-          /* What is the next starting point for this cell ? */
-          ti_gravity_beg_max = max(ti_beg_new, ti_gravity_beg_max);
-        }
+        /*   /\* What is the next starting point for this cell ? *\/ */
+        /*   ti_gravity_beg_max = max(ti_beg_new, ti_gravity_beg_max); */
+        /* } */
       }
     }
 
     /* Store the updated values */
     c->hydro.ti_end_min = min(c->hydro.ti_end_min, ti_hydro_end_min);
     c->hydro.ti_beg_max = max(c->hydro.ti_beg_max, ti_hydro_beg_max);
-    c->grav.ti_end_min = min(c->grav.ti_end_min, ti_gravity_end_min);
-    c->grav.ti_beg_max = max(c->grav.ti_beg_max, ti_gravity_beg_max);
+    /* c->grav.ti_end_min = min(c->grav.ti_end_min, ti_gravity_end_min); */
+    /* c->grav.ti_beg_max = max(c->grav.ti_beg_max, ti_gravity_beg_max); */
   }
 
   /* Clear the limiter flags. */
@@ -1491,8 +1492,9 @@ void runner_do_sync(struct runner *r, struct cell *c, int force,
 
   integertime_t ti_hydro_end_min = max_nr_timesteps, ti_hydro_end_max = 0,
                 ti_hydro_beg_max = 0;
-  integertime_t ti_gravity_end_min = max_nr_timesteps, ti_gravity_end_max = 0,
-                ti_gravity_beg_max = 0;
+  /* integertime_t ti_gravity_end_min = max_nr_timesteps, ti_gravity_end_max =
+   * 0, */
+  /*               ti_gravity_beg_max = 0; */
 
   /* Limit irrespective of cell flags? */
   force = (force || cell_get_flag(c, cell_flag_do_hydro_sync));
@@ -1517,23 +1519,23 @@ void runner_do_sync(struct runner *r, struct cell *c, int force,
         /* And aggregate */
         ti_hydro_end_min = min(cp->hydro.ti_end_min, ti_hydro_end_min);
         ti_hydro_beg_max = max(cp->hydro.ti_beg_max, ti_hydro_beg_max);
-        ti_gravity_end_min = min(cp->grav.ti_end_min, ti_gravity_end_min);
-        ti_gravity_beg_max = max(cp->grav.ti_beg_max, ti_gravity_beg_max);
+        /* ti_gravity_end_min = min(cp->grav.ti_end_min, ti_gravity_end_min); */
+        /* ti_gravity_beg_max = max(cp->grav.ti_beg_max, ti_gravity_beg_max); */
       }
     }
 
     /* Store the updated values */
     c->hydro.ti_end_min = min(c->hydro.ti_end_min, ti_hydro_end_min);
     c->hydro.ti_beg_max = max(c->hydro.ti_beg_max, ti_hydro_beg_max);
-    c->grav.ti_end_min = min(c->grav.ti_end_min, ti_gravity_end_min);
-    c->grav.ti_beg_max = max(c->grav.ti_beg_max, ti_gravity_beg_max);
+    /* c->grav.ti_end_min = min(c->grav.ti_end_min, ti_gravity_end_min); */
+    /* c->grav.ti_beg_max = max(c->grav.ti_beg_max, ti_gravity_beg_max); */
 
   } else if (!c->split && force) {
 
     ti_hydro_end_min = c->hydro.ti_end_min;
     ti_hydro_beg_max = c->hydro.ti_beg_max;
-    ti_gravity_end_min = c->grav.ti_end_min;
-    ti_gravity_beg_max = c->grav.ti_beg_max;
+    /* ti_gravity_end_min = c->grav.ti_end_min; */
+    /* ti_gravity_beg_max = c->grav.ti_beg_max; */
 
     /* Loop over the gas particles in this cell. */
     for (int k = 0; k < count; k++) {
@@ -1581,7 +1583,7 @@ void runner_do_sync(struct runner *r, struct cell *c, int force,
 
         /* Update particle */
         p->time_bin = new_time_bin;
-        if (p->gpart != NULL) p->gpart->time_bin = new_time_bin;
+        /* if (p->gpart != NULL) p->gpart->time_bin = new_time_bin; */
 
         /* Update the tracers properties */
         tracers_after_timestep_part(
@@ -1601,28 +1603,28 @@ void runner_do_sync(struct runner *r, struct cell *c, int force,
         ti_hydro_beg_max = max(ti_current, ti_hydro_beg_max);
 
         /* Also limit the gpart counter-part */
-        if (p->gpart != NULL) {
+        /* if (p->gpart != NULL) { */
 
-          /* Register the time-bin */
-          p->gpart->time_bin = p->time_bin;
+        /*   /\* Register the time-bin *\/ */
+        /*   p->gpart->time_bin = p->time_bin; */
 
-          /* What is the next sync-point ? */
-          ti_gravity_end_min =
-              min(ti_current + ti_new_step, ti_gravity_end_min);
-          ti_gravity_end_max =
-              max(ti_current + ti_new_step, ti_gravity_end_max);
+        /*   /\* What is the next sync-point ? *\/ */
+        /*   ti_gravity_end_min = */
+        /*       min(ti_current + ti_new_step, ti_gravity_end_min); */
+        /*   ti_gravity_end_max = */
+        /*       max(ti_current + ti_new_step, ti_gravity_end_max); */
 
-          /* What is the next starting point for this cell ? */
-          ti_gravity_beg_max = max(ti_current, ti_gravity_beg_max);
-        }
+        /*   /\* What is the next starting point for this cell ? *\/ */
+        /*   ti_gravity_beg_max = max(ti_current, ti_gravity_beg_max); */
+        /* } */
       }
     }
 
     /* Store the updated values */
     c->hydro.ti_end_min = min(c->hydro.ti_end_min, ti_hydro_end_min);
     c->hydro.ti_beg_max = max(c->hydro.ti_beg_max, ti_hydro_beg_max);
-    c->grav.ti_end_min = min(c->grav.ti_end_min, ti_gravity_end_min);
-    c->grav.ti_beg_max = max(c->grav.ti_beg_max, ti_gravity_beg_max);
+    /* c->grav.ti_end_min = min(c->grav.ti_end_min, ti_gravity_end_min); */
+    /* c->grav.ti_beg_max = max(c->grav.ti_beg_max, ti_gravity_beg_max); */
   }
 
   /* Clear the sync flags. */

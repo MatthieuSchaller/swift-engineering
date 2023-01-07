@@ -218,13 +218,13 @@ void space_rebuild(struct space *s, int repartitioned, int verbose) {
         /* Swap the particle */
         memswap(&s->parts[k], &s->parts[nr_parts], sizeof(struct part));
 
-        /* Swap the link with the gpart */
-        if (s->parts[k].gpart != NULL) {
-          s->parts[k].gpart->id_or_neg_offset = -k;
-        }
-        if (s->parts[nr_parts].gpart != NULL) {
-          s->parts[nr_parts].gpart->id_or_neg_offset = -nr_parts;
-        }
+        /* /\* Swap the link with the gpart *\/ */
+        /* if (s->parts[k].gpart != NULL) { */
+        /*   s->parts[k].gpart->id_or_neg_offset = -k; */
+        /* } */
+        /* if (s->parts[nr_parts].gpart != NULL) { */
+        /*   s->parts[nr_parts].gpart->id_or_neg_offset = -nr_parts; */
+        /* } */
 
         /* Swap the xpart */
         memswap(&s->xparts[k], &s->xparts[nr_parts], sizeof(struct xpart));
@@ -426,7 +426,7 @@ void space_rebuild(struct space *s, int repartitioned, int verbose) {
 
         /* Swap the link with part/spart */
         if (s->gparts[k].type == swift_type_gas) {
-          s->parts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k];
+          // s->parts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k];
         } else if (s->gparts[k].type == swift_type_stars) {
           s->sparts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k];
         } else if (s->gparts[k].type == swift_type_sink) {
@@ -436,8 +436,8 @@ void space_rebuild(struct space *s, int repartitioned, int verbose) {
         }
 
         if (s->gparts[nr_gparts].type == swift_type_gas) {
-          s->parts[-s->gparts[nr_gparts].id_or_neg_offset].gpart =
-              &s->gparts[nr_gparts];
+          /* s->parts[-s->gparts[nr_gparts].id_or_neg_offset].gpart = */
+          /*     &s->gparts[nr_gparts]; */
         } else if (s->gparts[nr_gparts].type == swift_type_stars) {
           s->sparts[-s->gparts[nr_gparts].id_or_neg_offset].gpart =
               &s->gparts[nr_gparts];

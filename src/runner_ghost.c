@@ -1126,7 +1126,7 @@ void runner_do_ghost(struct runner *r, struct cell *c, int timer) {
       /* Is this part within the timestep? */
       if (!part_is_active(p, e)) continue;
 
-      if (p->wcount < 1.e-5 * kernel_root) { /* No neighbours case */
+      if (p->density.wcount < 1.e-5 * kernel_root) { /* No neighbours case */
 
         hydro_part_has_no_neighbours(p, xp, cosmo);
 

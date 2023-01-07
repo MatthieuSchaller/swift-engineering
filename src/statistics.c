@@ -158,7 +158,7 @@ void stats_collect_part_mapper(void *map_data, int nr_parts, void *extra_data) {
     /* Get the particle */
     const struct part *p = &parts[k];
     const struct xpart *xp = &xparts[k];
-    const struct gpart *gp = p->gpart;
+    const struct gpart *gp = NULL;  // p->gpart;
 
     /* Ignore non-existing particles */
     if (p->time_bin == time_bin_inhibited ||

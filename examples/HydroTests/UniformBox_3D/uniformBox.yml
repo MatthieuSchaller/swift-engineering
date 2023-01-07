@@ -32,3 +32,7 @@ SPH:
 InitialConditions:
   file_name:  ./uniformBox.hdf5     # The file to read
   periodic:   1
+
+EoS:
+  rho_0:   1
+  c_0:     1

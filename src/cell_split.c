@@ -137,15 +137,15 @@ void cell_split(struct cell *c, const ptrdiff_t parts_offset,
           memswap(&parts[j], &part, sizeof(struct part));
           memswap(&xparts[j], &xpart, sizeof(struct xpart));
           memswap(&buff[j], &temp_buff, sizeof(struct cell_buff));
-          if (parts[j].gpart)
-            parts[j].gpart->id_or_neg_offset = -(j + parts_offset);
+          /* if (parts[j].gpart) */
+          /*   parts[j].gpart->id_or_neg_offset = -(j + parts_offset); */
           bid = temp_buff.ind;
         }
         parts[k] = part;
         xparts[k] = xpart;
         buff[k] = temp_buff;
-        if (parts[k].gpart)
-          parts[k].gpart->id_or_neg_offset = -(k + parts_offset);
+        /* if (parts[k].gpart) */
+        /*   parts[k].gpart->id_or_neg_offset = -(k + parts_offset); */
       }
       bucket_count[bid]++;
     }
@@ -421,8 +421,8 @@ void cell_split(struct cell *c, const ptrdiff_t parts_offset,
           memswap_unaligned(&gparts[j], &gpart, sizeof(struct gpart));
           memswap(&gbuff[j], &temp_buff, sizeof(struct cell_buff));
           if (gparts[j].type == swift_type_gas) {
-            parts[-gparts[j].id_or_neg_offset - parts_offset].gpart =
-                &gparts[j];
+            /* parts[-gparts[j].id_or_neg_offset - parts_offset].gpart = */
+            /*     &gparts[j]; */
           } else if (gparts[j].type == swift_type_stars) {
             sparts[-gparts[j].id_or_neg_offset - sparts_offset].gpart =
                 &gparts[j];
@@ -438,7 +438,8 @@ void cell_split(struct cell *c, const ptrdiff_t parts_offset,
         gparts[k] = gpart;
         gbuff[k] = temp_buff;
         if (gparts[k].type == swift_type_gas) {
-          parts[-gparts[k].id_or_neg_offset - parts_offset].gpart = &gparts[k];
+          /* parts[-gparts[k].id_or_neg_offset - parts_offset].gpart =
+           * &gparts[k]; */
         } else if (gparts[k].type == swift_type_stars) {
           sparts[-gparts[k].id_or_neg_offset - sparts_offset].gpart =
               &gparts[k];
@@ -497,8 +498,8 @@ void cell_reorder_extra_parts(struct cell *c, const ptrdiff_t parts_offset) {
       /* Swap everything, including g-part pointer */
       memswap(&parts[i], &parts[first_not_extra], sizeof(struct part));
       memswap(&xparts[i], &xparts[first_not_extra], sizeof(struct xpart));
-      if (parts[i].gpart)
-        parts[i].gpart->id_or_neg_offset = -(i + parts_offset);
+      /* if (parts[i].gpart) */
+      /*   parts[i].gpart->id_or_neg_offset = -(i + parts_offset); */
     }
   }
 
@@ -663,7 +664,7 @@ void cell_reorder_extra_gparts(struct cell *c, struct part *parts,
       memswap_unaligned(&gparts[i], &gparts[first_not_extra],
                         sizeof(struct gpart));
       if (gparts[i].type == swift_type_gas) {
-        parts[-gparts[i].id_or_neg_offset].gpart = &gparts[i];
+        /* parts[-gparts[i].id_or_neg_offset].gpart = &gparts[i]; */
       } else if (gparts[i].type == swift_type_sink) {
         sinks[-gparts[i].id_or_neg_offset].gpart = &gparts[i];
       } else if (gparts[i].type == swift_type_stars) {

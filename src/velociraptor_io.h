@@ -26,12 +26,12 @@ INLINE static void velociraptor_convert_part_groupID(const struct engine* e,
                                                      const struct part* p,
                                                      const struct xpart* xp,
                                                      long long* ret) {
-  if (p->gpart == NULL)
-    ret[0] = 0.f;
-  else {
-    const ptrdiff_t offset = p->gpart - e->s->gparts;
-    *ret = (e->s->gpart_group_data + offset)->groupID;
-  }
+  /* if (p->gpart == NULL) */
+  /*   ret[0] = 0.f; */
+  /* else { */
+  /*   const ptrdiff_t offset = p->gpart - e->s->gparts; */
+  /*   *ret = (e->s->gpart_group_data + offset)->groupID; */
+  /* } */
 }
 
 INLINE static void velociraptor_convert_spart_groupID(const struct engine* e,

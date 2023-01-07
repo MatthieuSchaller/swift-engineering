@@ -374,9 +374,9 @@ struct savelink_mapper_data {
  * Threadpool helper for accumulating the counts of particles per cell.
  */
 #ifdef SWIFT_DEBUG_CHECKS
-static void ENGINE_REDISTRIBUTE_SAVELINK_MAPPER(part, 1);
+// static void ENGINE_REDISTRIBUTE_SAVELINK_MAPPER(part, 1);
 #else
-static void ENGINE_REDISTRIBUTE_SAVELINK_MAPPER(part, 0);
+// static void ENGINE_REDISTRIBUTE_SAVELINK_MAPPER(part, 0);
 #endif
 
 /**
@@ -469,7 +469,7 @@ static void engine_redistribute_relink_mapper(void *map_data, int num_elements,
 
         /* Re-link */
         s->gparts[k].id_or_neg_offset = -partner_index;
-        s->parts[partner_index].gpart = &s->gparts[k];
+        //        s->parts[partner_index].gpart = &s->gparts[k];
       }
 
       /* Does this gpart have a star partner ? */
@@ -556,12 +556,12 @@ void engine_redistribute(struct engine *e) {
       memswap(&xparts[k], &xparts[nr_parts], sizeof(struct xpart));
 
       /* Swap the link with the gpart */
-      if (parts[k].gpart != NULL) {
-        parts[k].gpart->id_or_neg_offset = -k;
-      }
-      if (parts[nr_parts].gpart != NULL) {
-        parts[nr_parts].gpart->id_or_neg_offset = -nr_parts;
-      }
+      /* if (parts[k].gpart != NULL) { */
+      /*   parts[k].gpart->id_or_neg_offset = -k; */
+      /* } */
+      /* if (parts[nr_parts].gpart != NULL) { */
+      /*   parts[nr_parts].gpart->id_or_neg_offset = -nr_parts; */
+      /* } */
     } else {
       k++;
     }
@@ -621,7 +621,7 @@ void engine_redistribute(struct engine *e) {
 
       /* Swap the link with part/spart */
       if (s->gparts[k].type == swift_type_gas) {
-        s->parts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k];
+        /* s->parts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k]; */
       } else if (s->gparts[k].type == swift_type_stars) {
         s->sparts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k];
       } else if (s->gparts[k].type == swift_type_black_hole) {
@@ -629,8 +629,8 @@ void engine_redistribute(struct engine *e) {
       }
 
       if (s->gparts[nr_gparts].type == swift_type_gas) {
-        s->parts[-s->gparts[nr_gparts].id_or_neg_offset].gpart =
-            &s->gparts[nr_gparts];
+        /* s->parts[-s->gparts[nr_gparts].id_or_neg_offset].gpart = */
+        /*     &s->gparts[nr_gparts]; */
       } else if (s->gparts[nr_gparts].type == swift_type_stars) {
         s->sparts[-s->gparts[nr_gparts].id_or_neg_offset].gpart =
             &s->gparts[nr_gparts];
@@ -714,14 +714,16 @@ void engine_redistribute(struct engine *e) {
    * relative positions in the sent lists. */
   if (nr_parts > 0 && nr_gparts > 0) {
 
-    struct savelink_mapper_data savelink_data;
-    savelink_data.nr_nodes = nr_nodes;
-    savelink_data.counts = counts;
-    savelink_data.parts = (void *)parts;
-    savelink_data.nodeID = nodeID;
-    threadpool_map(&e->threadpool, engine_redistribute_savelink_mapper_part,
-                   nodes, nr_nodes, sizeof(int), threadpool_auto_chunk_size,
-                   &savelink_data);
+    /* struct savelink_mapper_data savelink_data; */
+    /* savelink_data.nr_nodes = nr_nodes; */
+    /* savelink_data.counts = counts; */
+    /* savelink_data.parts = (void *)parts; */
+    /* savelink_data.nodeID = nodeID; */
+    /* threadpool_map(&e->threadpool, engine_redistribute_savelink_mapper_part,
+     */
+    /*                nodes, nr_nodes, sizeof(int), threadpool_auto_chunk_size,
+     */
+    /*                &savelink_data); */
   }
   swift_free("dest", dest);
 

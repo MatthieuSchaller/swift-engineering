@@ -937,8 +937,8 @@ void do_line_of_sight(struct engine *e) {
               /* Store part and xpart properties. */
               memcpy(&LOS_parts[count], &cell_parts[i], sizeof(struct part));
               memcpy(&LOS_xparts[count], &cell_xparts[i], sizeof(struct xpart));
-              memcpy(&LOS_gparts[count], cell_parts[i].gpart,
-                     sizeof(struct gpart));
+              /* memcpy(&LOS_gparts[count], cell_parts[i].gpart, */
+              /*        sizeof(struct gpart)); */
 
               count++;
             }
@@ -978,8 +978,8 @@ void do_line_of_sight(struct engine *e) {
     if (e->nodeID == 0) {
 #ifdef WITH_MPI
       for (int i = 0; i < LOS_list[j].particles_in_los_total; ++i) {
-        LOS_parts[i].gpart = &LOS_gparts[i];
-        LOS_gparts[i].id_or_neg_offset = -i;
+        /* LOS_parts[i].gpart = &LOS_gparts[i]; */
+        /* LOS_gparts[i].id_or_neg_offset = -i; */
       }
 #endif
     }
@@ -1004,7 +1004,8 @@ void do_line_of_sight(struct engine *e) {
 
 #ifdef SWIFT_DEBUG_CHECKS
       for (int i = 0; i < LOS_list[j].particles_in_los_total; ++i) {
-        if (LOS_parts[i].gpart != &LOS_gparts[i]) error("Incorrect pointers!");
+        /* if (LOS_parts[i].gpart != &LOS_gparts[i]) error("Incorrect
+         * pointers!"); */
       }
 #endif
 

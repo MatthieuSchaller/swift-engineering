@@ -43,9 +43,9 @@
 void part_relink_gparts_to_parts(struct part *parts, const size_t N,
                                  const ptrdiff_t offset) {
   for (size_t k = 0; k < N; k++) {
-    if (parts[k].gpart) {
-      parts[k].gpart->id_or_neg_offset = -(k + offset);
-    }
+    /* if (parts[k].gpart) { */
+    /*   parts[k].gpart->id_or_neg_offset = -(k + offset); */
+    /* } */
   }
 }
 
@@ -107,9 +107,9 @@ void part_relink_gparts_to_bparts(struct bpart *bparts, const size_t N,
 void part_relink_parts_to_gparts(struct gpart *gparts, const size_t N,
                                  struct part *parts) {
   for (size_t k = 0; k < N; k++) {
-    if (gparts[k].type == swift_type_gas) {
-      parts[-gparts[k].id_or_neg_offset].gpart = &gparts[k];
-    }
+    /* if (gparts[k].type == swift_type_gas) { */
+    /*   parts[-gparts[k].id_or_neg_offset].gpart = &gparts[k]; */
+    /* } */
   }
 }
 
@@ -185,7 +185,7 @@ void part_relink_all_parts_to_gparts_mapper(void *restrict map_data, int count,
 
   /* Un-pack the data */
   struct relink_data *data = (struct relink_data *)extra_data;
-  struct part *const parts = data->parts;
+  // struct part *const parts = data->parts;
   struct spart *const sparts = data->sparts;
   struct bpart *const bparts = data->bparts;
   struct gpart *const gparts = (struct gpart *)map_data;
@@ -193,7 +193,7 @@ void part_relink_all_parts_to_gparts_mapper(void *restrict map_data, int count,
 
   for (int k = 0; k < count; k++) {
     if (gparts[k].type == swift_type_gas) {
-      parts[-gparts[k].id_or_neg_offset].gpart = &gparts[k];
+      /* parts[-gparts[k].id_or_neg_offset].gpart = &gparts[k]; */
     } else if (gparts[k].type == swift_type_stars) {
       sparts[-gparts[k].id_or_neg_offset].gpart = &gparts[k];
     } else if (gparts[k].type == swift_type_black_hole) {
@@ -296,7 +296,7 @@ void part_verify_links(struct part *parts, struct gpart *gparts,
       const struct part *part = &parts[-gparts[k].id_or_neg_offset];
 
       /* Check the reverse link */
-      if (part->gpart != &gparts[k]) error("Linking problem!");
+      /* if (part->gpart != &gparts[k]) error("Linking problem!"); */
 
       /* Check that the particles are at the same place */
       if (gparts[k].x[0] != part->x[0] || gparts[k].x[1] != part->x[1] ||
@@ -427,27 +427,27 @@ void part_verify_links(struct part *parts, struct gpart *gparts,
   for (size_t k = 0; k < nr_parts; ++k) {
 
     /* Ok, there is a link */
-    if (parts[k].gpart != NULL) {
+    /* if (parts[k].gpart != NULL) { */
 
-      /* Check the link */
-      if (parts[k].gpart->id_or_neg_offset != -(ptrdiff_t)k) {
-        error("Linking problem !");
-      }
+    /*   /\* Check the link *\/ */
+    /*   if (parts[k].gpart->id_or_neg_offset != -(ptrdiff_t)k) { */
+    /*     error("Linking problem !"); */
+    /*   } */
 
-      /* Check that the particles are at the same place */
-      if (parts[k].x[0] != parts[k].gpart->x[0] ||
-          parts[k].x[1] != parts[k].gpart->x[1] ||
-          parts[k].x[2] != parts[k].gpart->x[2])
-        error("Linked particles are not at the same position !");
+    /*   /\* Check that the particles are at the same place *\/ */
+    /*   if (parts[k].x[0] != parts[k].gpart->x[0] || */
+    /*       parts[k].x[1] != parts[k].gpart->x[1] || */
+    /*       parts[k].x[2] != parts[k].gpart->x[2]) */
+    /*     error("Linked particles are not at the same position !"); */
 
-      /* Check that the particles have the same mass */
-      if (hydro_get_mass(&parts[k]) != parts[k].gpart->mass)
-        error("Linked particles do not have the same mass!\n");
+    /*   /\* Check that the particles have the same mass *\/ */
+    /*   if (hydro_get_mass(&parts[k]) != parts[k].gpart->mass) */
+    /*     error("Linked particles do not have the same mass!\n"); */
 
-      /* Check that the particles are at the same time */
-      if (parts[k].time_bin != parts[k].gpart->time_bin)
-        error("Linked particles are not at the same time !");
-    }
+    /*   /\* Check that the particles are at the same time *\/ */
+    /*   if (parts[k].time_bin != parts[k].gpart->time_bin) */
+    /*     error("Linked particles are not at the same time !"); */
+    /* } */
   }
 
   /* Now check that all sparts are linked */

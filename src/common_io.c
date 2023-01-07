@@ -988,7 +988,7 @@ void io_duplicate_hydro_gparts_mapper(void* restrict data, int Ngas,
 
     /* Link the particles */
     gparts[i + Ndm].id_or_neg_offset = -(long long)(offset + i);
-    parts[i].gpart = &gparts[i + Ndm];
+    /* parts[i].gpart = &gparts[i + Ndm]; */
   }
 }
 

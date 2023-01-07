@@ -596,7 +596,7 @@ void space_synchronize_part_positions_mapper(void *map_data, int nr_parts,
       continue;
 
     /* Get its gravity friend */
-    struct gpart *gp = p->gpart;
+    struct gpart *gp = NULL;  // p->gpart;
 
 #ifdef SWIFT_DEBUG_CHECKS
     if (gp == NULL) error("Unlinked particle!");
@@ -1528,7 +1528,7 @@ void space_replicate(struct space *s, int replicate, int verbose) {
           const size_t offset_gpart = offset * nr_gparts + nr_dm;
 
           for (size_t n = 0; n < nr_parts; ++n) {
-            parts[offset_part + n].gpart = &gparts[offset_gpart + n];
+            // parts[offset_part + n].gpart = &gparts[offset_gpart + n];
             gparts[offset_gpart + n].id_or_neg_offset = -(offset_part + n);
           }
         }
@@ -1859,7 +1859,7 @@ void space_generate_gas(struct space *s, const struct cosmology *cosmo,
       if (p->id < 0) error("gas particle ID overflowd (id=%lld)", p->id);
 
       /* Set the links correctly */
-      p->gpart = gp_gas;
+      // p->gpart = gp_gas;
       gp_gas->id_or_neg_offset = -j;
       gp_gas->type = swift_type_gas;
 
@@ -2167,12 +2167,13 @@ void space_check_limiter_mapper(void *map_data, int nr_parts,
       error("Synchronized particle not treated! id=%lld synchronized=%d",
             parts[k].id, parts[k].limiter_data.to_be_synchronized);
 
-    if (parts[k].gpart != NULL) {
-      if (parts[k].time_bin != parts[k].gpart->time_bin) {
-        error("Gpart not on the same time-bin as part %i %i", parts[k].time_bin,
-              parts[k].gpart->time_bin);
-      }
-    }
+    /* if (parts[k].gpart != NULL) { */
+    /*   if (parts[k].time_bin != parts[k].gpart->time_bin) { */
+    /*     error("Gpart not on the same time-bin as part %i %i",
+     * parts[k].time_bin, */
+    /*           parts[k].gpart->time_bin); */
+    /*   } */
+    /* } */
   }
 #else
   error("Calling debugging code without debugging flag activated.");

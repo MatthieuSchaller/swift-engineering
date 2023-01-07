@@ -502,7 +502,7 @@ __attribute__((always_inline)) INLINE static void hydro_timestep_extra(
 __attribute__((always_inline)) INLINE static void hydro_init_part(
     struct part *restrict p, const struct hydro_space *hs) {
 
-  p->wcount = 0.f;
+  p->density.wcount = 0.f;
 }
 
 /**
@@ -528,10 +528,10 @@ __attribute__((always_inline)) INLINE static void hydro_end_density(
   /* const float h_inv_dim_plus_one = h_inv_dim * h_inv; /\* 1/h^(d+1) *\/ */
 
   /* Final operation on the density (add self-contribution). */
-  p->wcount += kernel_root;
+  p->density.wcount += kernel_root;
 
   /* Finish the calculation by inserting the missing h-factors */
-  p->wcount *= h_inv_dim;
+  p->density.wcount *= h_inv_dim;
 
   /* Final operation on the density (add self-contribution). */
   /* p->rho += p->mass * kernel_root; */
@@ -614,7 +614,7 @@ __attribute__((always_inline)) INLINE static void hydro_part_has_no_neighbours(
   const float h_inv_dim = pow_dimension(h_inv); /* 1/h^d */
 
   /* Re-set problematic values */
-  p->wcount = kernel_root * h_inv_dim;
+  p->density.wcount = kernel_root * h_inv_dim;
 
   /* /\* Some smoothing length multiples. *\/ */
   /* const float h = p->h; */

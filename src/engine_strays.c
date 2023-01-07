@@ -103,10 +103,10 @@ void engine_exchange_strays(struct engine *e, const size_t offset_parts,
     }
 
     /* Re-link the associated gpart with the buffer offset of the part. */
-    if (s->parts[offset_parts + k].gpart != NULL) {
-      s->parts[offset_parts + k].gpart->id_or_neg_offset =
-          -e->proxies[pid].nr_parts_out;
-    }
+    /* if (s->parts[offset_parts + k].gpart != NULL) { */
+    /*   s->parts[offset_parts + k].gpart->id_or_neg_offset = */
+    /*       -e->proxies[pid].nr_parts_out; */
+    /* } */
 
 #ifdef SWIFT_DEBUG_CHECKS
     if (s->parts[offset_parts + k].time_bin == time_bin_inhibited)
@@ -314,9 +314,9 @@ void engine_exchange_strays(struct engine *e, const size_t offset_parts,
 
     /* Reset the links */
     for (size_t k = 0; k < offset_parts; k++) {
-      if (s->parts[k].gpart != NULL) {
-        s->parts[k].gpart->id_or_neg_offset = -k;
-      }
+      /* if (s->parts[k].gpart != NULL) { */
+      /*   s->parts[k].gpart->id_or_neg_offset = -k; */
+      /* } */
     }
   }
 
@@ -369,7 +369,7 @@ void engine_exchange_strays(struct engine *e, const size_t offset_parts,
     /* Reset the links */
     for (size_t k = 0; k < offset_gparts; k++) {
       if (s->gparts[k].type == swift_type_gas) {
-        s->parts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k];
+        /* s->parts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k]; */
       } else if (s->gparts[k].type == swift_type_stars) {
         s->sparts[-s->gparts[k].id_or_neg_offset].gpart = &s->gparts[k];
       } else if (s->gparts[k].type == swift_type_black_hole) {
@@ -511,7 +511,7 @@ void engine_exchange_strays(struct engine *e, const size_t offset_parts,
           struct part *p =
               &s->parts[offset_parts + count_parts - gp->id_or_neg_offset];
           gp->id_or_neg_offset = s->parts - p;
-          p->gpart = gp;
+          /* p->gpart = gp; */
         } else if (gp->type == swift_type_stars) {
           struct spart *sp =
               &s->sparts[offset_sparts + count_sparts - gp->id_or_neg_offset];

@@ -311,7 +311,8 @@ __attribute__((always_inline, const)) INLINE static float pow_minus_gamma(
 
   const float inv = 1.f / x;
   const float inv2 = inv * inv;
-  return inv2 * inv2 * inv2;
+  const float inv4 = inv2 * inv2;
+  return inv4 * inv2 * inv;
 
 #else
 
@@ -504,6 +505,10 @@ __attribute__((always_inline, const)) INLINE static float pow_one_over_gamma(
 #elif defined(HYDRO_GAMMA_2_1)
 
   return sqrtf(x); /* x^(1/2) */
+
+#elif defined(HYDRO_GAMMA_7_1)
+
+  return powf(x, hydro_one_over_gamma); /* x^(1/7) */
 
 #else
 

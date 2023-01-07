@@ -58,6 +58,8 @@
 #include "./hydro/Gasoline/hydro_parameters.h"
 #elif defined(ANARCHY_PU_SPH)
 #include "./hydro/AnarchyPU/hydro_parameters.h"
+#elif defined(ENGINEERING_SPH)
+#include "./hydro/Engineering/hydro_parameters.h"
 #else
 #error "Invalid choice of SPH variant"
 #endif

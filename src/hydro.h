@@ -84,6 +84,10 @@
 #include "./hydro/AnarchyPU/hydro_iact.h"
 #define SPH_IMPLEMENTATION \
   "ANARCHY (Pressure-Energy) SPH (Dalla Vecchia+ in prep)"
+#elif defined(ENGINEERING_SPH)
+#include "./hydro/Engineering/hydro.h"
+#include "./hydro/Engineering/hydro_iact.h"
+#define SPH_IMPLEMENTATION "Engineering SPH (Crespo+ 2007)"
 #else
 #error "Invalid choice of SPH variant"
 #endif

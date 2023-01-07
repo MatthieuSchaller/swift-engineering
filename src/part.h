@@ -92,6 +92,9 @@ struct threadpool;
 #include "./hydro/AnarchyPU/hydro_part.h"
 #define hydro_need_extra_init_loop 0
 #define EXTRA_HYDRO_LOOP
+#elif defined(ENGINEERING_SPH)
+#include "./hydro/Engineering/hydro_part.h"
+#define hydro_need_extra_init_loop 0
 #else
 #error "Invalid choice of SPH variant"
 #endif

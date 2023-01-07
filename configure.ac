@@ -2146,6 +2146,9 @@ case "$with_eos" in
    isothermal-gas)
       AC_DEFINE([EOS_ISOTHERMAL_GAS], [1], [Isothermal gas equation of state])
    ;;
+   tait-water)
+      AC_DEFINE([EOS_TAIT_WATER], [1], [Tait equation of state for water])
+   ;;
    planetary)
       AC_DEFINE([EOS_PLANETARY], [1], [All planetary equations of state])
    ;;

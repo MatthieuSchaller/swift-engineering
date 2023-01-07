@@ -2160,7 +2160,7 @@ esac
 #  Adiabatic index
 AC_ARG_WITH([adiabatic-index],
    [AS_HELP_STRING([--with-adiabatic-index=<gamma>],
-      [adiabatic index @<:@5/3, 7/5, 4/3, 2 default: 5/3@:>@]
+      [adiabatic index @<:@5/3, 7/5, 4/3, 2, 7 default: 5/3@:>@]
    )],
    [with_gamma="$withval"],
    [with_gamma="5/3"]
@@ -2177,6 +2177,9 @@ case "$with_gamma" in
    ;;
    2)
       AC_DEFINE([HYDRO_GAMMA_2_1], [2.], [Adiabatic index is 2])
+   ;;
+   7)
+      AC_DEFINE([HYDRO_GAMMA_7_1], [7.], [Adiabatic index is 7])
    ;;
    *)
       AC_MSG_ERROR([Unknown adiabatic index: $with_gamma])

@@ -662,80 +662,7 @@ __attribute__((always_inline)) INLINE static void hydro_part_has_no_neighbours(
 __attribute__((always_inline)) INLINE static void hydro_prepare_force(
     struct part *restrict p, struct xpart *restrict xp,
     const struct cosmology *cosmo, const struct hydro_props *hydro_props,
-    const float dt_alpha, const float dt_therm) {
-
-  /* const float fac_Balsara_eps = cosmo->a_factor_Balsara_eps; */
-
-  /* /\* Inverse of the smoothing length *\/ */
-  /* const float h_inv = 1.f / p->h; */
-
-  /* /\* Compute the norm of the curl *\/ */
-  /* const float curl_v = sqrtf(p->density.rot_v[0] * p->density.rot_v[0] + */
-  /*                            p->density.rot_v[1] * p->density.rot_v[1] + */
-  /*                            p->density.rot_v[2] * p->density.rot_v[2]); */
-
-  /* /\* Compute the norm of div v including the Hubble flow term *\/ */
-  /* const float div_physical_v = p->density.div_v + hydro_dimension * cosmo->H;
-   */
-  /* const float abs_div_physical_v = fabsf(div_physical_v); */
-
-  /* /\* Compute the pressure *\/ */
-  /* const float pressure = gas_pressure_from_internal_energy(p->rho, p->u); */
-
-  /* /\* Compute the sound speed *\/ */
-  /* const float soundspeed = gas_soundspeed_from_pressure(p->rho, pressure); */
-
-  /* /\* Compute the "grad h" term  - Note here that we have \tilde{x} */
-  /*  * as 1 as we use the local number density to find neighbours. This */
-  /*  * introduces a j-component that is considered in the force loop, */
-  /*  * meaning that this cached grad_h_term gives: */
-  /*  * */
-  /*  * f_ij = 1.f - grad_h_term_i / m_j *\/ */
-  /* const float common_factor = p->h * hydro_dimension_inv / p->density.wcount;
-   */
-
-  /* float grad_h_term; */
-  /* /\* Ignore changing-kernel effects when h ~= h_max *\/ */
-  /* if (p->h > 0.9999f * hydro_props->h_max) { */
-  /*   grad_h_term = 0.f; */
-  /*   warning("h ~ h_max for particle with ID %lld (h: %g)", p->id, p->h); */
-  /* } else { */
-  /*   const float grad_W_term = common_factor * p->density.wcount_dh; */
-  /*   if (grad_W_term < -0.9999f) { */
-  /*     /\* if we get here, we either had very small neighbour contributions */
-  /*        (which should be treated as a no neighbour case in the ghost) or */
-  /*        a very weird particle distribution (e.g. particles sitting on */
-  /*        top of each other). Either way, we cannot use the normal */
-  /*        expression, since that would lead to overflow or excessive round */
-  /*        off and cause excessively high accelerations in the force loop *\/
-   */
-  /*     grad_h_term = 0.f; */
-  /*     warning( */
-  /*         "grad_W_term very small for particle with ID %lld (h: %g, wcount: "
-   */
-  /*         "%g, wcount_dh: %g).", */
-  /*         p->id, p->h, p->density.wcount, p->density.wcount_dh); */
-  /*   } else { */
-  /*     grad_h_term = common_factor * p->density.rho_dh / (1.f + grad_W_term);
-   */
-  /*   } */
-  /* } */
-
-  /* /\* Compute the Balsara switch *\/ */
-  /* /\* Pre-multiply in the AV factor; hydro_props are not passed to the iact
-   */
-  /*  * functions *\/ */
-  /* const float balsara = hydro_props->viscosity.alpha * abs_div_physical_v /
-   */
-  /*                       (abs_div_physical_v + curl_v + */
-  /*                        0.0001f * fac_Balsara_eps * soundspeed * h_inv); */
-
-  /* /\* Update variables. *\/ */
-  /* p->force.f = grad_h_term; */
-  /* p->force.pressure = pressure; */
-  /* p->force.soundspeed = soundspeed; */
-  /* p->force.balsara = balsara; */
-}
+    const float dt_alpha, const float dt_therm) {}
 
 /**
  * @brief Reset acceleration fields of a particle
@@ -753,8 +680,10 @@ __attribute__((always_inline)) INLINE static void hydro_reset_acceleration(
   p->a_hydro[1] = 0.0f;
   p->a_hydro[2] = 0.0f;
 
+  p->v_sig = 0.0f;
+
   /* Reset the time derivatives. */
-  // p->u_dt = 0.0f;
+  p->rho_dt = 0.0f;
 }
 
 /**
